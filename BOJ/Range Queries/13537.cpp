@@ -16,11 +16,21 @@ void add(int k, int x) {
 		mt[k].push_back(x);
 	}
 }
-int q(int node, int s, int e, int x, int y, int k) {
-	if (x > e || y < s) return 0;
-	if (x <= s && e <= y) return mt[node].end() - upper_bound(mt[node].begin(), mt[node].end(), k);
-	int mid = (s + e) / 2;
-	return q(node * 2, s, mid, x, y, k) + q(node * 2 + 1, mid + 1, e, x, y, k);
+int q(int x, int y ,int k) {
+	x += sz, y += sz;
+	int ret = 0;
+	while (x <= y) {
+		if (x % 2 == 1) {
+			ret += mt[x].end() - upper_bound(mt[x].begin(), mt[x].end(), k);
+			x++;
+		}
+		if (y % 2 == 0) {
+			ret += mt[y].end() - upper_bound(mt[y].begin(), mt[y].end(), k);
+			y--;
+		}
+		x /= 2, y /= 2;
+	}
+	return ret;
 }
 int main() {
 	ios_base::sync_with_stdio(0);
@@ -37,7 +47,7 @@ int main() {
 	for (int i = 0; i < m; i++) {
 		int a, b, c;
 		cin >> a >> b >> c;
-		int res = q(1, 1, sz, a, b, c);
+		int res = q(a - 1, b - 1, c);
 		cout << res << "\n";
 	}
 }
