@@ -16,15 +16,25 @@ void add(int k, int x) {
 		mt[k].push_back(x);
 	}
 }
-int q(int node, int s, int e, int x, int y, int k) {
-	if (x > e || y < s) return 0;
-	if (x <= s && e <= y) return upper_bound(mt[node].begin(), mt[node].end(), k) - mt[node].begin();
-	int mid = (s + e) / 2;
-	return q(node * 2, s, mid, x, y, k) + q(node * 2 + 1, mid + 1, e, x, y, k);
+int q(int x, int y, int k) {
+	x += sz, y += sz;
+	int ret = 0;
+	while (x <= y) {
+		if (x % 2 == 1) {
+			ret += upper_bound(mt[x].begin(), mt[x].end(), k) - mt[x].begin();
+			x++;
+		}
+		if (y % 2 == 0) {
+			ret += upper_bound(mt[y].begin(), mt[y].end(), k) - mt[y].begin();
+			y--;
+		}
+		x /= 2, y /= 2;
+	}
+	return ret;
 }
 int main() {
 	ios_base::sync_with_stdio(0);
-	cin.tie(0);	
+	cin.tie(0);
 	cin >> n >> m;
 	while (sz < n) sz *= 2;
 	for (int i = 0; i < n; i++) {
@@ -39,7 +49,7 @@ int main() {
 		int lo = -1e9, hi = 1e9;
 		while (lo <= hi) {
 			int mid = (lo + hi) / 2;
-			if (q(1, 1, sz, x, y, mid) < z) lo = mid + 1;
+			if (q(x - 1, y - 1, mid) < z) lo = mid + 1;
 			else hi = mid - 1;
 		}
 		cout << lo << "\n";
